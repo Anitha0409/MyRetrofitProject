@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <TextView
+        android:id="@+id/tvRepoName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:text="RepoName"
+        android:textSize="20sp"
+        android:textStyle="bold"/>
+    <TextView
+        android:id="@+id/tvRepoDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="RepoDescription"
+        android:layout_marginTop="80dp"
+        android:textSize="20sp"/>
+
+
+
+
+</FrameLayout>
