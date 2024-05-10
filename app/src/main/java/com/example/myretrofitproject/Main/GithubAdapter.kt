@@ -3,37 +3,58 @@ package com.example.myretrofitproject.Main
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.myretrofitproject.Model.UserRepoDetailsClass
+import com.example.myretrofitproject.Main.viewholder.RepoViewHolder
+import com.example.myretrofitproject.Main.viewholder.UserItemViewHolder
+import com.example.myretrofitproject.Model.BaseUserRepoViewItem
+import com.example.myretrofitproject.Model.RepoViewItem
+import com.example.myretrofitproject.Model.UserViewItem
 import com.example.myretrofitproject.databinding.RepodetailsRvlayoutBinding
+import com.example.myretrofitproject.databinding.UserdetailsRvlayoutBinding
 
-class GithubAdapter: RecyclerView.Adapter<GithubAdapter.ViewHolder>()
+class GithubAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>()
 {
 // What is the use of this function?
-    private var repoList = UserRepoDetailsClass()
-    fun setRepoList(repoList: UserRepoDetailsClass){
-        this.repoList= repoList
-        notifyDataSetChanged()
+    private var repoList = ArrayList<BaseUserRepoViewItem>()
+    fun setRepoList(repoList: List<BaseUserRepoViewItem>){
+        this.repoList= repoList as ArrayList<BaseUserRepoViewItem>
+        notifyItemChanged(0)
     }
-    inner class ViewHolder(val binding:RepodetailsRvlayoutBinding):RecyclerView.ViewHolder(binding.root)
+    // inner class ViewHolder(val binding:RepodetailsRvlayoutBinding):RecyclerView.ViewHolder(binding.root)
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-
-           val binding= RepodetailsRvlayoutBinding.inflate(
-                LayoutInflater.from(
-                    parent.context
-                )
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return if (viewType == ItemViewTypeEnum.USER_TYPE.type) {
+            val binding = UserdetailsRvlayoutBinding.inflate(
+                LayoutInflater.from(parent.context), parent, false
             )
-        return ViewHolder(binding)
+            UserItemViewHolder(binding)
+        } else {
+            val binding = RepodetailsRvlayoutBinding.inflate(
+                LayoutInflater.from(parent.context), parent, false
+            )
+            RepoViewHolder(binding)
+        }
     }
 
-    override fun getItemCount(): Int {
-       return repoList.size
+    override fun getItemCount() = repoList.size
+
+    override fun getItemViewType(position: Int): Int {
+        return if (repoList[position] is UserViewItem) {
+            ItemViewTypeEnum.USER_TYPE.type
+        } else {
+            ItemViewTypeEnum.REPO_TYPE.type
+        }
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.binding.tvRepoName.text = repoList[position].name
-        holder.binding.tvRepoDescription.text = repoList[position].description
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        if (repoList[position] is UserViewItem) {
+            (holder as UserItemViewHolder).bind(repoList[position] as UserViewItem)
+        } else {
+            (holder as RepoViewHolder).bind(repoList[position] as RepoViewItem)
+        }
     }
 
-
+    enum class ItemViewTypeEnum(val type: Int) {
+        USER_TYPE (0),
+        REPO_TYPE (1)
+    }
 }

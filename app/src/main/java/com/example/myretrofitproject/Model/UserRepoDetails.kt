@@ -1,13 +1,13 @@
 package com.example.myretrofitproject.Model
 
+import com.google.gson.annotations.SerializedName
 
-class UserRepoDetailsClass: ArrayList<UserRepoDetailsClass.UserRepoDetails>() // Is this the right way?
 
-{
-    data class UserRepoDetails(
-        val name: String,
-        val description: String
+data class UserRepoDetails(
+        @SerializedName("name")
+        val name: String?,
+        @SerializedName("description")
+        val description: String?
     )
 
-}
 

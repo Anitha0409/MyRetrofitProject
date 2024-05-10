@@ -1,6 +1,10 @@
 package com.example.myretrofitproject.Model
 
+import com.google.gson.annotations.SerializedName
+
 data class UserDetails(
-    val name: String,
-    val avatar_url: String,
+    @SerializedName("login")
+    val name: String?,
+    @SerializedName("avatar_url")
+    val avatarUrl: String?,
 )

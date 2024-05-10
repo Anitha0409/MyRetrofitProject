@@ -36,7 +36,7 @@ import com.example.myretrofitproject.databinding.UserdetailsRvlayoutBinding
      override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.binding.tvUserProfileName.text = userList[position].name
         Glide.with(holder.itemView)
-            .load(userList[position].avatar_url)
+            .load(userList[position].avatarUrl)
             .into(holder.binding.ivUserProfile)
         }
     }
