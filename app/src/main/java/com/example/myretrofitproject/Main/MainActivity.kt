@@ -17,7 +17,6 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding:ActivityMainBinding
     private lateinit var viewModel: GithubViewModel
-    //private var userAdapter: GithubAdapter2? =null
     private lateinit var repoAdapter: GithubAdapter
 
 
@@ -27,12 +26,6 @@ class MainActivity : AppCompatActivity() {
         binding =ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(findViewById(R.id.my_toolbar))
-
-        // Implementing the steps for the ViewModel
-
-        // Is this the right order of steps?
-
-        //prepareUserRecyclerView()
         prepareRepoRecyclerView()
 
         viewModel = ViewModelProvider(this)[GithubViewModel::class.java]
@@ -41,15 +34,10 @@ class MainActivity : AppCompatActivity() {
             getRepodetails()
         }
 
-        // Where should I place this piece of code?
-        /*viewModel.observeUserLiveData().observe(
-            this, Observer {
-                    userList-> userAdapter?.setUserList(userList)
-            })*/
-
         viewModel.repoLiveData.observe(this) {
             repoList -> repoAdapter.setRepoList(repoList)
             showLoading(false)
+
         }
     }
 
@@ -68,15 +56,6 @@ class MainActivity : AppCompatActivity() {
             viewModel.getRepoDetails(username)
         }
     }
-        /*private fun prepareUserRecyclerView() {
-            userAdapter = GithubAdapter2()
-            binding.rvUserDetails.apply {
-                layoutManager = LinearLayoutManager(applicationContext)
-                adapter = userAdapter
-            }
-
-        }*/
-
         private fun prepareRepoRecyclerView() {
             repoAdapter = GithubAdapter()
             binding.rvRepoDetails.apply {

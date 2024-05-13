@@ -10,17 +10,16 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
         android:text="RepoName"
-        android:textSize="20sp"
+        android:gravity="center"
+        android:textSize="22sp"
         android:textStyle="bold"/>
     <TextView
         android:id="@+id/tvRepoDescription"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingTop="20dp"
         android:text="RepoDescription"
         android:layout_marginTop="80dp"
         android:textSize="20sp"/>
-
-
-
-
 </FrameLayout>

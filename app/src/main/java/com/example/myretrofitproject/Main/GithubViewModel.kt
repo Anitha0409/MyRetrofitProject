@@ -23,8 +23,6 @@ class GithubViewModel: ViewModel() {
 
     val itemList = ArrayList<BaseUserRepoViewItem>()
 
-    //private var userLiveData = MutableLiveData<UserDetails>()
-
     fun setUserDetails(username: String){
         viewModelScope.launch {
             RetrofitClientObject.api.getUserDetails(username)
@@ -34,7 +32,6 @@ class GithubViewModel: ViewModel() {
                         response: Response<UserDetails>
                     ) {
                         if (response.body() != null) {
-                            //userLiveData.value = response.body()
                             itemList.add(
                                 UserViewItem(
                                     response.body()?.name ?: "",
@@ -54,7 +51,6 @@ class GithubViewModel: ViewModel() {
                 })
         }
     }
-
     fun getRepoDetails(username: String) {
         viewModelScope.launch {
             RetrofitClientObject.api.getUserRepoDetails(username)
@@ -65,7 +61,6 @@ class GithubViewModel: ViewModel() {
                         response: Response<List<UserRepoDetails>>
                     ) {
                         if (response.body() != null) {
-                            //repoLiveData.postValue(response.body())
                             response.body()?.let { items ->
                                 items.forEach { item ->
                                     itemList.add(
@@ -90,13 +85,5 @@ class GithubViewModel: ViewModel() {
                 )
         }
     }
-
-    /*fun observeRepoLiveData() : LiveData <UserRepoDetailsResponse>{
-        return repoLiveData
-    }
-
-    fun observeUserLiveData() : LiveData<UserDetails>{
-        return userLiveData
-    }*/
 
 }

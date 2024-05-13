@@ -13,13 +13,11 @@ import com.example.myretrofitproject.databinding.UserdetailsRvlayoutBinding
 
 class GithubAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>()
 {
-// What is the use of this function?
     private var repoList = ArrayList<BaseUserRepoViewItem>()
     fun setRepoList(repoList: List<BaseUserRepoViewItem>){
         this.repoList= repoList as ArrayList<BaseUserRepoViewItem>
         notifyItemChanged(0)
     }
-    // inner class ViewHolder(val binding:RepodetailsRvlayoutBinding):RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return if (viewType == ItemViewTypeEnum.USER_TYPE.type) {
@@ -57,4 +55,5 @@ class GithubAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>()
         USER_TYPE (0),
         REPO_TYPE (1)
     }
+
 }
