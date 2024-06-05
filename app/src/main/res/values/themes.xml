@@ -2,9 +2,11 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.MyRetrofitProject" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
-         <item name="colorPrimary">@color/mistyRose</item>
+         <item name="colorPrimary">@color/blue</item>
+
     </style>
 
-    <style name="Theme.MyRetrofitProject" parent="Theme.MaterialComponents.DayNight.NoActionBar"/>
-
+    <style name="Theme.MyRetrofitProject" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/blue</item>
+    </style>
 </resources>

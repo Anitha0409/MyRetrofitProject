@@ -9,6 +9,7 @@
     android:orientation="vertical">
 
     <androidx.appcompat.widget.Toolbar
+        android:layout_marginTop="35dp"
         android:id="@+id/my_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
@@ -22,7 +23,7 @@
 
             <EditText
                 android:id="@+id/et_UserInput"
-                android:layout_width="287dp"
+                android:layout_width="270dp"
                 android:layout_height="50dp"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="10dp"
@@ -46,6 +47,13 @@
        android:layout_gravity="center"
         android:visibility="gone"
         />
+
+    <TextView
+        android:id="@+id/error_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:textColor="#FF0000"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_repoDetails"

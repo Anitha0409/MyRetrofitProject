@@ -1,89 +1,153 @@
 package com.example.myretrofitproject.Main
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.myretrofitproject.Interface.RetrofitClientObject
+import com.example.myretrofitproject.Main.repo.GithubRepo
 import com.example.myretrofitproject.Model.BaseUserRepoViewItem
+import com.example.myretrofitproject.Model.ErrorViewItem
+import com.example.myretrofitproject.Model.RepoResponseResult
 import com.example.myretrofitproject.Model.RepoViewItem
-import com.example.myretrofitproject.Model.UserDetails
-import com.example.myretrofitproject.Model.UserRepoDetails
+import com.example.myretrofitproject.Model.UserResponseResult
 import com.example.myretrofitproject.Model.UserViewItem
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import kotlinx.coroutines.withContext
 
 class GithubViewModel: ViewModel() {
 
-    private var _repoLiveData = MutableLiveData<List<BaseUserRepoViewItem>>()
-    val repoLiveData: LiveData<List<BaseUserRepoViewItem>> = _repoLiveData
+    private var _repoLiveData = MutableLiveData<ViewState>()
+    val repoLiveData: LiveData<ViewState> = _repoLiveData
 
-    val itemList = ArrayList<BaseUserRepoViewItem>()
+    private var repo = GithubRepo()
+
+    private val itemList = ArrayList<BaseUserRepoViewItem>()
 
     fun setUserDetails(username: String){
         viewModelScope.launch {
-            RetrofitClientObject.api.getUserDetails(username)
-                .enqueue(object : Callback<UserDetails> {
-                    override fun onResponse(
-                        call: Call<UserDetails>,
-                        response: Response<UserDetails>
-                    ) {
-                        if (response.body() != null) {
-                            itemList.add(
-                                UserViewItem(
-                                    response.body()?.name ?: "",
-                                    response.body()?.avatarUrl ?: ""
-                                )
-                            )
-                            _repoLiveData.value = itemList
-                        } else {
-                            return
+            _repoLiveData.value = ViewState.Loading
+            val userDetailsResult = withContext(Dispatchers.IO) {
+                repo.getUserData(username)
+            }
+
+            when(userDetailsResult) {
+                is UserResponseResult.Success -> {
+                    itemList.clear()
+                    itemList.add(
+                        UserViewItem(
+                            userDetailsResult.userDetails.name ?: "",
+                            userDetailsResult.userDetails.avatarUrl ?: ""
+                        )
+                    )
+                    setRepoDetails(username)
+
+                }
+
+                is UserResponseResult.NoInternetConnection -> {
+                    _repoLiveData.value = ViewState.Error("There is no internet connection")
+                }
+
+                is UserResponseResult.NetworkError -> {
+                    when(userDetailsResult.code) {
+                        400 -> {
+                            _repoLiveData.value = ViewState.Error("Error getting the user info")
+                        }
+
+                        404 -> {
+                            _repoLiveData.value = ViewState.Error("Check username and try again")
+                        }
+
+                        500 -> {
+                            _repoLiveData.value = ViewState.Error("Try Again Later")
+                        }
+
+                        else -> {
+                            _repoLiveData.value = ViewState.Error(userDetailsResult.message)
                         }
                     }
+                }
 
-                    override fun onFailure(call: Call<UserDetails>, t: Throwable) {
-                        Log.d("TAG", t.message.toString())
-                    }
-
-                })
+                is UserResponseResult.OtherErrors -> {
+                    _repoLiveData.value = ViewState.Error("You blew up the world..!")
+                }
+            }
         }
     }
-    fun getRepoDetails(username: String) {
-        viewModelScope.launch {
-            RetrofitClientObject.api.getUserRepoDetails(username)
-                .enqueue(object : Callback<List<UserRepoDetails>> {
 
-                    override fun onResponse(
-                        call: Call<List<UserRepoDetails>>,
-                        response: Response<List<UserRepoDetails>>
-                    ) {
-                        if (response.body() != null) {
-                            response.body()?.let { items ->
-                                items.forEach { item ->
-                                    itemList.add(
-                                        RepoViewItem(
-                                            item.name ?: "",
-                                            item.description?: ""
-                                        )
-                                    )
-                                }
-                                _repoLiveData.value = itemList
-                            }
-                        } else {
-                            return
+    private fun setRepoDetails(username: String) {
+        viewModelScope.launch {
+            val repoListResult = withContext(Dispatchers.IO) {
+                repo.getRepoDataForUsername(username)
+            }
+
+            when(repoListResult) {
+                is RepoResponseResult.Success -> {
+                    if (repoListResult.repoList.isNotEmpty()){
+                        repoListResult.repoList.forEach {repo ->
+                            itemList.add(
+                                RepoViewItem(
+                                    repo.name ?: "",
+                                    repo.description ?: ""
+                                )
+                            )
                         }
+                    } else {
+                        itemList.add(
+                            ErrorViewItem(
+                                "No repos found for this user"
+                            )
+                        )
                     }
 
-                    override fun onFailure(call: Call<List<UserRepoDetails>>, t: Throwable) {
-                        Log.d("TAG", t.message.toString())
+                    _repoLiveData.value = ViewState.Data(itemList)
+                }
+
+                is RepoResponseResult.NoInternetConnection ->{
+                    _repoLiveData.value = ViewState.Error("There is no internet connection")
+                }
+
+                is RepoResponseResult.NetworkError ->{
+                    when(repoListResult.code) {
+                        400 -> {
+                            _repoLiveData.value = ViewState.Error("Error getting the user info")
+                        }
+
+                        404 -> {
+                            itemList.add(
+                                ErrorViewItem("Check username and try again")
+                            )
+                            _repoLiveData.value = ViewState.Data(itemList)
+                        }
+
+                        500 -> {
+                            _repoLiveData.value = ViewState.Error("Try Again Later")
+                        }
+
+                        else -> {
+                            _repoLiveData.value = ViewState.Error(repoListResult.message)
+                        }
                     }
 
                 }
-                )
+                is RepoResponseResult.OtherErrors -> {
+                    _repoLiveData.value = ViewState.Error("You blew up the world from repo..!")
+
+                }
+
+                is RepoResponseResult.Failure -> {
+                    _repoLiveData.value = ViewState.Error("Error getting the repos")
+
+                }
+
+            }
+
         }
     }
 
+    sealed class ViewState {
+        data object Loading : ViewState()
+        class Error(val error: String) : ViewState()
+        class Data(val repoList: List<BaseUserRepoViewItem>) : ViewState()
+    }
 }

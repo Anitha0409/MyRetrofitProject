@@ -10,11 +10,11 @@ import retrofit2.http.Path
 interface GithubApi {
 
     @GET("/users/{username}")
-    @Headers("Authorization: token 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")
-    fun getUserDetails(@Path("username") username: String): Call<UserDetails>
+    @Headers("Authorization: token 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")
+    suspend fun getUserDetails(@Path("username") username: String): UserDetails
 
 
     @GET("/users/{username}/repos")
-    @Headers("Authorization: token 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")
-    fun getUserRepoDetails(@Path("username") username: String): Call<List<UserRepoDetails>> // Is this the right way?
+    @Headers("Authorization: token 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")
+    suspend fun getUserRepoDetails(@Path("username") username: String): List<UserRepoDetails>
 }

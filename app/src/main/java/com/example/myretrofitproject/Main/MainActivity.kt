@@ -2,6 +2,8 @@ package com.example.myretrofitproject.Main
 
 import android.os.Bundle
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -11,14 +13,12 @@ import androidx.viewpager2.widget.ViewPager2.Orientation
 import com.example.myretrofitproject.R
 import com.example.myretrofitproject.databinding.ActivityMainBinding
 
-
 class MainActivity : AppCompatActivity() {
 
 
     private lateinit var binding:ActivityMainBinding
     private lateinit var viewModel: GithubViewModel
     private lateinit var repoAdapter: GithubAdapter
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,29 +31,36 @@ class MainActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this)[GithubViewModel::class.java]
         binding.btnSearch.setOnClickListener {
             searchUser()
-            getRepodetails()
         }
 
         viewModel.repoLiveData.observe(this) {
-            repoList -> repoAdapter.setRepoList(repoList)
-            showLoading(false)
-
+            if (it != null) {
+                when(it) {
+                    is GithubViewModel.ViewState.Loading -> {
+                        repoAdapter.submitList(emptyList())
+                        binding.errorText.visibility = GONE
+                        showLoading(true)
+                    }
+                    is GithubViewModel.ViewState.Data -> {
+                        repoAdapter.submitList(it.repoList)
+                        binding.errorText.visibility = GONE
+                        showLoading(false)
+                    }
+                    is GithubViewModel.ViewState.Error -> {
+                        repoAdapter.submitList(emptyList())
+                        showLoading(false)
+                        binding.errorText.visibility = VISIBLE
+                        binding.errorText.text = it.error
+                    }
+                }
+            }
         }
     }
 
     private fun searchUser(){
         val username = binding.etUserInput.text.toString()
         if (username.isNotEmpty()){
-            showLoading(true)
             viewModel.setUserDetails(username)
-        }
-    }
-
-    private fun getRepodetails(){
-        val username = binding.etUserInput.text.toString()
-        if(username.isNotEmpty()) {
-            showLoading(true)
-            viewModel.getRepoDetails(username)
         }
     }
         private fun prepareRepoRecyclerView() {
