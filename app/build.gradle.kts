@@ -54,6 +54,10 @@ dependencies {
     annotationProcessor("androidx.room:room-compiler:2.6.1")
     kapt ("androidx.room:room-compiler:2.6.1")
 
+
+    val fragment_version = "1.8.1"
+    implementation("androidx.fragment:fragment-ktx:$fragment_version")
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

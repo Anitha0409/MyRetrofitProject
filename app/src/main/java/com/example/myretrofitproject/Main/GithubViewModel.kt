@@ -104,7 +104,13 @@ class GithubViewModel: ViewModel() {
                 }
 
                 is RepoResponseResult.NoInternetConnection ->{
-                    _repoLiveData.value = ViewState.Error("There is no internet connection")
+                    //_repoLiveData.value = ViewState.Error("There is no internet connection")
+                    itemList.add(
+                        ErrorViewItem(
+                            "There is no internet connection"
+                        )
+                    )
+                    _repoLiveData.value = ViewState.Data(itemList)
                 }
 
                 is RepoResponseResult.NetworkError ->{

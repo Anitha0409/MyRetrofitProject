@@ -9,8 +9,11 @@ import com.google.gson.annotations.SerializedName
 data class RepoDetailsEntity(
 
     @PrimaryKey(autoGenerate = true)
+    val id:Int = 0,
+    @SerializedName("login")
+    val username: String?,
     @SerializedName("name")
-    val name: String?,
+    val repoName: String?,
     @SerializedName("description")
     val description: String?,
     @SerializedName("updated_at")

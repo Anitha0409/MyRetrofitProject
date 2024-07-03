@@ -13,6 +13,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyRetrofitProject"
+        android:name=".Main.application.MyApplication"
         tools:targetApi="31">
         <activity
             android:name=".Main.MainActivity"
